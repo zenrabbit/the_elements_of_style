@@ -1,5 +1,5 @@
 # the_elements_of_style
-A simple interactive tool for interacting with this classic little book.
+A simple interactive tool for rule look-ups from this classic 'little book'.
 
 Source  
 The Project Gutenberg EBook of The Elements of Style, by William Strunk  
