@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elements of Style Rule Lookup</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      color: #111;
+    }
+    .wrap {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+    .left {
+      width: 360px;
+      max-width: 100%;
+      background: #fff;
+      border-right: 1px solid #ddd;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .right {
+      flex: 1;
+      padding: 24px;
+    }
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .rule-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .rule-btn:hover {
+      background: #f0f0f0;
+    }
+    .rule-btn.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .label {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .good {
+      color: #0a6a22;
+      margin-bottom: 8px;
+    }
+    .bad {
+      color: #9a1c1c;
+    }
+    .muted {
+      color: #555;
+    }
+    @media (max-width: 800px) {
+      .wrap {
+        display: block;
+      }
+      .left {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+      }
+      .right {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="left">
+      <h2>Rule Lookup</h2>
+      <input id="search" type="text" placeholder="Search rules or concepts">
+      <div id="list"></div>
+    </div>
+    <div class="right">
+      <div class="card">
+        <h1 id="title">Loading...</h1>
+        <p id="summary" class="muted"></p>
+      </div>
+      <div class="card">
+        <h3>Examples</h3>
+        <div id="examples"></div>
+      </div>
+      <div class="card">
+        <h3>Keywords</h3>
+        <div id="keywords"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var rules = [
+      {id:1,title:"Form the possessive singular of nouns by adding 's",summary:"Use apostrophe-s for singular possessives.",keywords:["possessive","apostrophe","singular noun"],examples:[{good:"Charles's friend",bad:"Charles' friend"}]},
+      {id:2,title:"Use a comma after each term in a series of three or more",summary:"Use the serial comma in a simple series.",keywords:["comma","series","list","Oxford comma"],examples:[{good:"red, white, and blue",bad:"red, white and blue"}]},
+      {id:3,title:"Enclose parenthetic expressions between commas",summary:"Set off interrupting material with commas on both sides.",keywords:["parenthetic","nonrestrictive","comma"],examples:[{good:"The best way to see a country, unless you are pressed for time, is to travel on foot.",bad:"The best way to see a country unless you are pressed for time is to travel on foot."}]},
+      {id:4,title:"Place a comma before a conjunction introducing a coordinate clause",summary:"Use a comma before and, but, or similar conjunctions when they join independent clauses.",keywords:["conjunction","coordinate clause","comma"],examples:[{good:"The situation is perilous, but there is still one chance of escape.",bad:"The situation is perilous but there is still one chance of escape."}]},
+      {id:5,title:"Do not join independent clauses by a comma",summary:"Avoid comma splices.",keywords:["comma splice","semicolon","independent clause"],examples:[{good:"It is nearly half past five; we cannot reach town before dark.",bad:"It is nearly half past five, we cannot reach town before dark."}]},
+      {id:6,title:"Do not break sentences in two",summary:"Avoid sentence fragments created by incorrect punctuation.",keywords:["fragment","sentence break"],examples:[{good:"He was an interesting talker, a man who had traveled all over the world.",bad:"He was an interesting talker. A man who had traveled all over the world."}]},
+      {id:7,title:"A participial phrase at the beginning must refer to the grammatical subject",summary:"Avoid dangling modifiers.",keywords:["dangling modifier","participial phrase"],examples:[{good:"Walking slowly down the road, he saw a woman accompanied by two children.",bad:"Walking slowly down the road, a woman accompanied by two children came into view."}]},
+      {id:8,title:"Make the paragraph the unit of composition",summary:"Use one paragraph for one topic, unless the material is very short.",keywords:["paragraph","organization","topic"],examples:[{good:"One paragraph develops one clear idea.",bad:"One paragraph jumps across unrelated ideas."}]},
+      {id:9,title:"Begin each paragraph with a topic sentence",summary:"Lead with the main point and keep the paragraph aligned with it.",keywords:["topic sentence","paragraph structure"],examples:[{good:"Main point first, development after.",bad:"Main point buried halfway through the paragraph."}]},
+      {id:10,title:"Use the active voice",summary:"Prefer active constructions when they are more direct and clear.",keywords:["active voice","passive voice"],examples:[{good:"I shall always remember my first visit to Boston.",bad:"My first visit to Boston will always be remembered by me."}]},
+      {id:11,title:"Put statements in positive form",summary:"Prefer direct assertions over weak negatives.",keywords:["positive form","clarity"],examples:[{good:"He usually came late.",bad:"He was not very often on time."}]},
+      {id:12,title:"Use definite, specific, concrete language",summary:"Prefer vivid particulars over vague abstractions.",keywords:["specific","concrete","definite"],examples:[{good:"It rained every day for a week.",bad:"A period of unfavorable weather set in."}]},
+      {id:13,title:"Omit needless words",summary:"Every word should earn its place.",keywords:["concise","brevity","needless words"],examples:[{good:"His story is strange.",bad:"His story is a strange one."}]},
+      {id:14,title:"Avoid a succession of loose sentences",summary:"Do not let paragraph after paragraph drift into the same loose pattern.",keywords:["loose sentences","rhythm","variety"],examples:[{good:"Vary sentence shapes and lengths.",bad:"Sentence after sentence trails off in the same pattern."}]},
+      {id:15,title:"Express coordinate ideas in similar form",summary:"Use parallel structure for equal ideas.",keywords:["parallelism","parallel structure"],examples:[{good:"The ceremony was both long and tedious.",bad:"It was both a long ceremony and very tedious."}]},
+      {id:16,title:"Keep related words together",summary:"Place modifiers and linked parts close to each other.",keywords:["word order","modifier","syntax"],examples:[{good:"He found only two mistakes.",bad:"He only found two mistakes."}]},
+      {id:17,title:"In summaries, keep to one tense",summary:"Use one tense consistently in a summary.",keywords:["tense","summary","consistency"],examples:[{good:"Romeo learns of Juliet's supposed death and returns.",bad:"Romeo learned of Juliet's supposed death and returns."}]},
+      {id:18,title:"Place the emphatic words of a sentence at the end",summary:"The strongest position in a sentence is often the ending.",keywords:["emphasis","sentence ending"],examples:[{good:"This steel is used in making razors because of its hardness.",bad:"Because of its hardness, this steel is used in making razors."}]}
+    ];
+
+    var selectedId = 1;
+    var listEl = document.getElementById("list");
+    var searchEl = document.getElementById("search");
+    var titleEl = document.getElementById("title");
+    var summaryEl = document.getElementById("summary");
+    var examplesEl = document.getElementById("examples");
+    var keywordsEl = document.getElementById("keywords");
+
+    function matches(rule, q) {
+      if (!q) return true;
+      q = q.toLowerCase();
+      var hay = (
+        String(rule.id) + " " +
+        rule.title + " " +
+        rule.summary + " " +
+        rule.keywords.join(" ")
+      ).toLowerCase();
+      return hay.indexOf(q) !== -1;
+    }
+
+    function getFilteredRules() {
+      var q = searchEl.value.trim();
+      var out = [];
+      for (var i = 0; i < rules.length; i++) {
+        if (matches(rules[i], q)) out.push(rules[i]);
+      }
+      return out;
+    }
+
+    function renderList() {
+      var filtered = getFilteredRules();
+      listEl.innerHTML = "";
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = "<p class='muted'>No matching rules.</p>";
+        return;
+      }
+
+      for (var i = 0; i < filtered.length; i++) {
+        (function(rule) {
+          var btn = document.createElement("button");
+          btn.className = "rule-btn" + (rule.id === selectedId ? " active" : "");
+          btn.textContent = "Rule " + rule.id + ": " + rule.title;
+          btn.onclick = function() {
+            selectedId = rule.id;
+            renderList();
+            renderDetails(rule);
+          };
+          listEl.appendChild(btn);
+        })(filtered[i]);
+      }
+    }
+
+    function renderDetails(rule) {
+      titleEl.textContent = "Rule " + rule.id + ": " + rule.title;
+      summaryEl.textContent = rule.summary;
+
+      examplesEl.innerHTML = "";
+      for (var i = 0; i < rule.examples.length; i++) {
+        var item = document.createElement("div");
+        item.style.marginBottom = "16px";
+        item.innerHTML =
+          "<div class='label'>Better</div>" +
+          "<div class='good'>" + escapeHtml(rule.examples[i].good) + "</div>" +
+          "<div class='label'>Avoid</div>" +
+          "<div class='bad'>" + escapeHtml(rule.examples[i].bad) + "</div>";
+        examplesEl.appendChild(item);
+      }
+
+      keywordsEl.innerHTML = "";
+      for (var j = 0; j < rule.keywords.length; j++) {
+        var span = document.createElement("span");
+        span.textContent = rule.keywords[j];
+        span.style.display = "inline-block";
+        span.style.padding = "6px 10px";
+        span.style.margin = "0 8px 8px 0";
+        span.style.border = "1px solid #ccc";
+        span.style.borderRadius = "999px";
+        keywordsEl.appendChild(span);
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    searchEl.addEventListener("input", function() {
+      var filtered = getFilteredRules();
+      if (filtered.length > 0 && !matches(rules[selectedId - 1], searchEl.value.trim())) {
+        selectedId = filtered[0].id;
+        renderDetails(filtered[0]);
+      }
+      renderList();
+    });
+
+    renderList();
+    renderDetails(rules[0]);
+  </script>
+</body>
+</html>
